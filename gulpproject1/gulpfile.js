@@ -70,5 +70,4 @@ gulp.task('scripts', function () {
 // 监听文件是否发生变化
 gulp.task('watch',function () {
   gulp.watch('src/js/*.js',['scripts'])
-  
 })
