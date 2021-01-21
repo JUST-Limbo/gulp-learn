@@ -1,0 +1,1 @@
+function sum(l,e){return l+e}console.log("这是file1中的内容"),sum(5,7),console.log("这是file2中的内容"),alert("file2");
