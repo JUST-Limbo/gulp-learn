@@ -5,6 +5,8 @@ const sass = require("gulp-sass");
 const uglify = require("gulp-uglify");
 const babel = require("gulp-babel");
 const htmlmin = require("gulp-htmlmin");
+const del = require("del");
+const webserver = require("gulp-webserver");
 // 1.创建一个打包css的任务
 // gulp@3的语法
 // 命令行输入 gulp sHandler 执行
@@ -82,14 +84,43 @@ function audioHandler() {
 // 第三方文件
 function libHandler() {
   return gulp
-    .src('./src/lib/**/*')
+    .src('./src/lib/**')
     .pipe(gulp.dest('./dist/lib/'))
 }
 
 function fontsHandler() {
   return gulp
-    .src('./src/fonts/**/*')
+    .src('./src/fonts/**')
     .pipe(gulp.dest('./dist/fonts/'))
+}
+
+function delHandler() {
+  return del(['./dist/'])
+}
+
+function webserverHandler() {
+  return gulp
+    .src('./dist')
+    .pipe(webserver({
+      host: 'localhost', // 域名(可以配置自定义域名)
+      port: '8080',
+      livereload: true, // 当文件修改时是否自动刷新页面
+      open: './pages/index.html', // 默认打开哪个文件,从dist目录以后的路径开始书写
+      proxies: [ // 配置所有代理 对象数组
+        {
+          source: '', // 代理标识符 用来直接拼接地址
+          target: '' // 代理目标地址
+        }
+      ]
+    }))
+}
+
+// 监控任务不需要结束,所以不用return
+function watchHandler() {
+  gulp.watch('./src/sass/*.scss',sassHandler)
+  gulp.watch('./src/css/*.css',cssHandler)
+  gulp.watch('./src/js/*.js',jsHandler)
+  gulp.watch('./src/pages/*.html',htmlHandler)
 }
 
 /**
@@ -107,15 +138,23 @@ function fontsHandler() {
 // const res = gulp.parallel(cssHandler, jsHandler, sassHandler)
 // module.exports.default = res
 
-module.exports = {
-  cssHandler,
-  sassHandler,
-  jsHandler,
-  htmlHandler,
-  imgHandler,
-  videoHandler,
-  audioHandler,
-  libHandler,
-  fontsHandler,
-}
-module.exports.default = gulp.parallel(cssHandler, jsHandler, sassHandler, htmlHandler, imgHandler, libHandler, fontsHandler, videoHandler, audioHandler)
+// module.exports = {
+//   cssHandler,
+//   sassHandler,
+//   jsHandler,
+//   htmlHandler,
+//   imgHandler,
+//   videoHandler,
+//   audioHandler,
+//   libHandler,
+//   fontsHandler,
+//   delHandler,
+//   webserverHandler,
+//   watchHandler
+// }
+module.exports.default = gulp.series(
+  delHandler,
+  gulp.parallel(cssHandler, jsHandler, sassHandler, htmlHandler, imgHandler, libHandler, fontsHandler, videoHandler, audioHandler),
+  webserverHandler,
+  watchHandler
+)
