@@ -15,5 +15,6 @@
     "url": "https://github.com/JUST-Limbo/gulp-learn/issues"
   },
   "homepage": "https://github.com/JUST-Limbo/gulp-learn#readme",
-  "description": ""
+  "description": "",
+  "devDependencies": {}
 }
