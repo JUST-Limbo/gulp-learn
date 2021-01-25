@@ -7,6 +7,7 @@ const babel = require("gulp-babel");
 const htmlmin = require("gulp-htmlmin");
 const del = require("del");
 const webserver = require("gulp-webserver");
+const fileInclude  = require("gulp-file-include");
 // 1.创建一个打包css的任务
 // gulp@3的语法
 // 命令行输入 gulp sHandler 执行
@@ -50,6 +51,10 @@ function jsHandler() {
 function htmlHandler() {
   return gulp
     .src('./src/pages/*.html')
+    .pipe(fileInclude({ // 根据配置导入对应的html片段
+      prefix:'@_@', // 自定义的标识符
+      basepath:'./src/components' // 基准目录 组件文件所在目录
+    }))
     .pipe(htmlmin({ // 通过配置的参数进行压缩
       // collapseWhitespace: true,  // 移除空格
       // removeEmptyAttributes: true, // 移除空属性
@@ -106,12 +111,12 @@ function webserverHandler() {
       port: '8080',
       livereload: true, // 当文件修改时是否自动刷新页面
       open: './pages/index.html', // 默认打开哪个文件,从dist目录以后的路径开始书写
-      proxies: [ // 配置所有代理 对象数组
-        {
-          source: '', // 代理标识符 用来直接拼接地址
-          target: '' // 代理目标地址
-        }
-      ]
+      // proxies: [ // 配置所有代理 对象数组
+      //   {
+      //     source: '', // 代理标识符 用来直接拼接地址
+      //     target: '' // 代理目标地址
+      //   }
+      // ]
     }))
 }
 
